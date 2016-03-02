@@ -16,8 +16,8 @@ import android.widget.EditText;
 
 import com.foursquare.credentials.Keys;
 import com.foursquare.model.ExploreResponse;
-import com.foursquare.model.Location;
 import com.foursquare.model.RecommendedVenuesGroup;
+import com.foursquare.model.RecommendedVenuesResponse;
 import com.foursquare.service.FoursquareService;
 import com.github.xavierlepretre.foursquarerecommendations.rx.ViewObservable;
 import com.github.xavierlepretre.rxdialog.AlertDialogButtonEvent;
@@ -41,6 +41,7 @@ import rx.subjects.BehaviorSubject;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback
 {
     public static final String TAG = MainActivity.class.getSimpleName();
+    private static final int ZOOM_PADDING = 0;
 
     @VisibleForTesting BehaviorSubject<GoogleMap> mapSubject;
     private FloatingActionButton fab;
@@ -66,31 +67,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fab = (FloatingActionButton) findViewById(R.id.fab);
         foursquareService = new FoursquareService(Keys.create(Constants.CLIENT_ID, Constants.CLIENT_SECRET));
         placeSubscription = getDesiredPlaceName(fab)
-                .flatMap(new Func1<String, Observable<List<RecommendedVenuesGroup>>>()
+                .flatMap(new Func1<String, Observable<RecommendedVenuesResponse>>()
                 {
                     @Override
-                    public Observable<List<RecommendedVenuesGroup>> call(String desiredPlace)
+                    public Observable<RecommendedVenuesResponse> call(String desiredPlace)
                     {
                         MainActivity.this.desiredPlace = desiredPlace;
                         return getRecommendedVenuesNear(desiredPlace);
                     }
                 })
-                .doOnNext(new Action1<List<RecommendedVenuesGroup>>()
+                .doOnNext(new Action1<RecommendedVenuesResponse>()
                 {
-                    @Override public void call(List<RecommendedVenuesGroup> recommendedVenuesGroups)
+                    @Override public void call(RecommendedVenuesResponse recommendedVenuesResponse)
                     {
-                        MainActivity.this.recommendedVenuesGroups = recommendedVenuesGroups;
+                        MainActivity.this.recommendedVenuesGroups = recommendedVenuesResponse.getGroups();
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .withLatestFrom(
                         mapSubject,
-                        new Func2<List<RecommendedVenuesGroup>, GoogleMap, GoogleMap>()
+                        new Func2<RecommendedVenuesResponse, GoogleMap, GoogleMap>()
                         {
                             @Override
-                            public GoogleMap call(List<RecommendedVenuesGroup> recommendedVenuesGroups, GoogleMap map)
+                            public GoogleMap call(RecommendedVenuesResponse recommendedVenuesResponse, GoogleMap map)
                             {
-                                populateMap(map, recommendedVenuesGroups);
+                                populateMap(map, recommendedVenuesResponse.getGroups());
+                                map.animateCamera(CameraUpdateFactory.create(
+                                        recommendedVenuesResponse.getSuggestedBounds(),
+                                        ZOOM_PADDING));
                                 return map;
                             }
                         })
@@ -183,21 +187,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 });
     }
 
-    @NonNull private Observable<List<RecommendedVenuesGroup>> getRecommendedVenuesNear(
+    @NonNull private Observable<RecommendedVenuesResponse> getRecommendedVenuesNear(
             @NonNull String location)
     {
         return foursquareService.exploreVenuesByNear(location)
-                .flatMap(new Func1<ExploreResponse, Observable<List<RecommendedVenuesGroup>>>()
+                .flatMap(new Func1<ExploreResponse, Observable<RecommendedVenuesResponse>>()
                 {
                     @Override
-                    public Observable<List<RecommendedVenuesGroup>> call(ExploreResponse exploreResponse)
+                    public Observable<RecommendedVenuesResponse> call(ExploreResponse exploreResponse)
                     {
                         if (exploreResponse.getMeta().getCode() != com.foursquare.Constants.RESPONSE_SUCCESSFUL)
                         {
                             Log.v(TAG, exploreResponse.toString());
                             return Observable.error(new IllegalArgumentException("Response code not 200"));
                         }
-                        return Observable.just(exploreResponse.getResponse().getGroups());
+                        return Observable.just(exploreResponse.getResponse());
                     }
                 });
     }
