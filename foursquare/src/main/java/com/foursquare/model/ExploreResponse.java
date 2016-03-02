@@ -17,13 +17,13 @@ abstract public class ExploreResponse implements Parcelable
     public static final String KEY_RESPONSE = "response";
 
     @JsonProperty(KEY_META)
-    @NonNull abstract ResponseMeta getMeta();
+    @NonNull abstract public ResponseMeta getMeta();
 
     @JsonProperty(KEY_RESPONSE)
-    @NonNull abstract RecommendedVenuesResponse getResponse();
+    @NonNull abstract public RecommendedVenuesResponse getResponse();
 
     @JsonCreator
-    @NonNull static ExploreResponse create(
+    @NonNull public static ExploreResponse create(
             @JsonProperty(KEY_META) @NonNull ResponseMeta meta,
             @JsonProperty(KEY_RESPONSE) @NonNull RecommendedVenuesResponse response)
     {

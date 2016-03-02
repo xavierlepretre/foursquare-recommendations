@@ -11,8 +11,8 @@ import auto.parcel.AutoParcel;
 @AutoParcel
 abstract public class RecommendedVenue implements Parcelable
 {
-    private static final String KEY_VENUE = "venue";
-    private static final String KEY_REFERRAL_ID = "referralId";
+    public static final String KEY_VENUE = "venue";
+    public static final String KEY_REFERRAL_ID = "referralId";
 
     @JsonProperty(KEY_VENUE)
     @NonNull abstract public Venue getVenue();
@@ -20,7 +20,7 @@ abstract public class RecommendedVenue implements Parcelable
     @JsonProperty(KEY_REFERRAL_ID)
     @NonNull abstract public ReferralId getReferralId();
 
-    @JsonCreator static RecommendedVenue create(
+    @JsonCreator public static RecommendedVenue create(
             @JsonProperty(KEY_VENUE) @NonNull Venue venue,
             @JsonProperty(KEY_REFERRAL_ID) @NonNull ReferralId referralId)
     {

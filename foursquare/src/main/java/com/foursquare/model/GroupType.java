@@ -14,7 +14,7 @@ abstract public class GroupType implements Parcelable
     @JsonValue
     @NonNull abstract public String getType();
 
-    @JsonCreator static GroupType create(@NonNull String type)
+    @JsonCreator public static GroupType create(@NonNull String type)
     {
         return new AutoParcel_GroupType(type);
     }

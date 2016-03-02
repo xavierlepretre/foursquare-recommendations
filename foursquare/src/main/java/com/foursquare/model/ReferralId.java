@@ -15,7 +15,7 @@ abstract public class ReferralId implements Parcelable
     @NonNull abstract public String getId();
 
     @JsonCreator
-    @NonNull static ReferralId create(@NonNull String id)
+    @NonNull public static ReferralId create(@NonNull String id)
     {
         return new AutoParcel_ReferralId(id);
     }

@@ -14,7 +14,7 @@ abstract public class VenueId implements Parcelable
     @JsonValue
     @NonNull abstract public String getId();
 
-    @JsonCreator static VenueId create(@NonNull String id)
+    @JsonCreator public static VenueId create(@NonNull String id)
     {
         return new AutoParcel_VenueId(id);
     }

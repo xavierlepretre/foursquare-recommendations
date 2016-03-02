@@ -27,7 +27,7 @@ abstract public class RecommendedVenuesGroup implements Parcelable
     @NonNull abstract public List<RecommendedVenue> getItems();
 
     @JsonCreator
-    @NonNull static RecommendedVenuesGroup create(
+    @NonNull public static RecommendedVenuesGroup create(
             @JsonProperty(KEY_TYPE) @NonNull GroupType type,
             @JsonProperty(KEY_NAME) @NonNull String name,
             @JsonProperty(KEY_ITEMS) @NonNull List<RecommendedVenue> items)

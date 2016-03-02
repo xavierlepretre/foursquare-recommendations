@@ -21,7 +21,7 @@ abstract public class ResponseMeta implements Parcelable
     abstract public RequestId getRequestId();
 
     @JsonCreator
-    @NonNull static ResponseMeta create(
+    @NonNull public static ResponseMeta create(
             @JsonProperty(KEY_CODE) int code,
             @JsonProperty(KEY_REQUEST_ID) RequestId requestId)
     {

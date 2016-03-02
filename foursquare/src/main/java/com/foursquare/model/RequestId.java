@@ -14,7 +14,7 @@ abstract public class RequestId implements Parcelable
     @JsonValue
     @NonNull abstract public String getId();
 
-    @JsonCreator static RequestId create(@NonNull String id)
+    @JsonCreator public static RequestId create(@NonNull String id)
     {
         return new AutoParcel_RequestId(id);
     }
