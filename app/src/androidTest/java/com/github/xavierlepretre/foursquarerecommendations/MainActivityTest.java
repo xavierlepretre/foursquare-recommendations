@@ -30,6 +30,16 @@ public class MainActivityTest
     }
 
     @Test
+    public void testFabButtonTwice_launchesDialogTwice() throws Exception
+    {
+        onView(withId(R.id.fab)).perform(click());
+        onView(withText(android.R.string.cancel)).perform(click());
+        onView(withId(R.id.fab)).perform(click());
+
+        onView(withText("Where do you want to explore?")).check(matches(isDisplayed()));
+    }
+
+    @Test
     public void testEnterPlace_takesIt() throws Exception
     {
         onView(withId(R.id.fab)).perform(click());

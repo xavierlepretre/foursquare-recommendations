@@ -9,9 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 
 import com.foursquare.credentials.Keys;
@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         placeSubscription = getDesiredPlaceName(fab)
                 .flatMap(new Func1<String, Observable<List<RecommendedVenuesGroup>>>()
                 {
-                    @Override public Observable<List<RecommendedVenuesGroup>> call(String desiredPlace)
+                    @Override
+                    public Observable<List<RecommendedVenuesGroup>> call(String desiredPlace)
                     {
                         MainActivity.this.desiredPlace = desiredPlace;
                         return getRecommendedVenuesNear(desiredPlace);
@@ -124,45 +125,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @NonNull private Observable<String> getDesiredPlaceName(@NonNull FloatingActionButton fab)
     {
-        final EditText input = (EditText) LayoutInflater.from(this)
-                .inflate(R.layout.place_input, null);
-
         return ViewObservable.clicked(fab)
-                .flatMap(new Func1<View, Observable<AlertDialogEvent>>()
+                .flatMap(new Func1<View, Observable<String>>()
                 {
-                    @Override public Observable<AlertDialogEvent> call(View view)
+                    @Override public Observable<String> call(View view)
                     {
+                        final EditText input = (EditText) LayoutInflater.from(MainActivity.this)
+                                .inflate(R.layout.place_input, null);
+                        input.setText(desiredPlace);
+
                         return new RxAlertDialogSupport.Builder(MainActivity.this)
                                 .title(R.string.dialog_place_title)
                                 .view(input)
                                 .positiveButton(android.R.string.ok)
                                 .neutralButton(android.R.string.cancel)
-                                .show();
-                    }
-                })
-                .filter(new Func1<AlertDialogEvent, Boolean>()
-                {
-                    @Override public Boolean call(AlertDialogEvent alertDialogEvent)
-                    {
-                        return alertDialogEvent instanceof AlertDialogButtonEvent
-                                && ((AlertDialogButtonEvent) alertDialogEvent).getWhich() == DialogInterface.BUTTON_POSITIVE;
-                    }
-                })
-                .map(new Func1<AlertDialogEvent, String>()
-                {
-                    @Override public String call(AlertDialogEvent alertDialogEvent)
-                    {
-                        return input.getText().toString();
+                                .show()
+                                .filter(new Func1<AlertDialogEvent, Boolean>()
+                                {
+                                    @Override public Boolean call(AlertDialogEvent alertDialogEvent)
+                                    {
+                                        return alertDialogEvent instanceof AlertDialogButtonEvent
+                                                && ((AlertDialogButtonEvent) alertDialogEvent).getWhich() == DialogInterface.BUTTON_POSITIVE;
+                                    }
+                                })
+                                .map(new Func1<AlertDialogEvent, String>()
+                                {
+                                    @Override public String call(AlertDialogEvent alertDialogEvent)
+                                    {
+                                        return input.getText().toString();
+                                    }
+                                });
                     }
                 });
     }
 
-    @NonNull private Observable<List<RecommendedVenuesGroup>> getRecommendedVenuesNear(@NonNull String location)
+    @NonNull private Observable<List<RecommendedVenuesGroup>> getRecommendedVenuesNear(
+            @NonNull String location)
     {
         return foursquareService.exploreVenuesByNear(location)
                 .flatMap(new Func1<ExploreResponse, Observable<List<RecommendedVenuesGroup>>>()
                 {
-                    @Override public Observable<List<RecommendedVenuesGroup>> call(ExploreResponse exploreResponse)
+                    @Override
+                    public Observable<List<RecommendedVenuesGroup>> call(ExploreResponse exploreResponse)
                     {
                         if (exploreResponse.getMeta().getCode() != com.foursquare.Constants.RESPONSE_SUCCESSFUL)
                         {
