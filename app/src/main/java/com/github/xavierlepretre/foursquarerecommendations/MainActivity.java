@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,5 +57,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override public void onMapReady(GoogleMap googleMap)
+    {
     }
 }

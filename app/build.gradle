@@ -11,11 +11,25 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        debug {
+            storeFile file("mydebugkey.keystore") // We need to put it here as Google Maps expect it.
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE.txt'
     }
 }
 
@@ -26,4 +40,5 @@ dependencies {
     compile 'com.android.support:design:23.2.0'
     compile project(':foursquare')
     compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
 }
