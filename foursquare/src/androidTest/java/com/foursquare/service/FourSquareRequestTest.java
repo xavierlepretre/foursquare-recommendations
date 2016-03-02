@@ -50,4 +50,18 @@ public class FourSquareRequestTest
         assertThat(response.getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
         assertThat(response.getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
     }
+
+    @Test @FlakyTest(tolerance = 3)
+    public void canExploreVenuesByNear() throws Exception
+    {
+        Iterator<ExploreResponse> iterator = service
+                .exploreVenuesByNear("London")
+                .toBlocking()
+                .getIterator();
+        ExploreResponse response = iterator.next();
+        assertThat(iterator.hasNext()).isFalse();
+        assertThat(response.getMeta().getCode()).isEqualTo(200);
+        assertThat(response.getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
+        assertThat(response.getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
+    }
 }

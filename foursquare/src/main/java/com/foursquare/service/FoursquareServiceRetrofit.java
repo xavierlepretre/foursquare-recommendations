@@ -15,6 +15,7 @@ interface FoursquareServiceRetrofit
     String KEY_CLIENT_SECRET = "client_secret";
     String KEY_VERSION = "v";
     String KEY_LAT_LON = "ll";
+    String KEY_NEAR = "near";
 
     @GET(PREFIX + "/venues/explore")
     Observable<ExploreResponse> exploreVenues(
@@ -22,4 +23,11 @@ interface FoursquareServiceRetrofit
             @NonNull @Query(KEY_CLIENT_SECRET)String clientSecret,
             @NonNull @Query(KEY_VERSION) String version,
             @NonNull @Query(KEY_LAT_LON) String latLng);
+
+    @GET(PREFIX + "/venues/explore")
+    Observable<ExploreResponse> exploreVenuesByNear(
+            @NonNull @Query(KEY_CLIENT_ID) String clientId,
+            @NonNull @Query(KEY_CLIENT_SECRET)String clientSecret,
+            @NonNull @Query(KEY_VERSION) String version,
+            @NonNull @Query(KEY_NEAR) String near);
 }

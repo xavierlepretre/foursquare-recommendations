@@ -59,4 +59,13 @@ public class FoursquareService
                 version,
                 location.getQueryForm());
     }
+
+    @NonNull public Observable<ExploreResponse> exploreVenuesByNear(@NonNull String location)
+    {
+        return serviceRetrofit.exploreVenuesByNear(
+                keys.getClientId(),
+                keys.getClientSecret(),
+                version,
+                location);
+    }
 }
