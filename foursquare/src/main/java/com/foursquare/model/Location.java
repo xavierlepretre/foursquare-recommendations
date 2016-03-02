@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import auto.parcel.AutoParcel;
@@ -24,8 +25,18 @@ abstract public class Location
     @JsonProperty(KEY_LONGITUDE)
     abstract public double getLon();
 
+    @JsonIgnore
+    @NonNull public String getQueryForm()
+    {
+        return new StringBuilder()
+                .append(getLat())
+                .append(",")
+                .append(getLon())
+                .toString();
+    }
+
     @JsonCreator
-    @NonNull static Location create(
+    @NonNull public static Location create(
             @JsonProperty(KEY_ADDRESS) @Nullable String address,
             @JsonProperty(KEY_LATITUDE) double lat,
             @JsonProperty(KEY_LONGITUDE) double lon)

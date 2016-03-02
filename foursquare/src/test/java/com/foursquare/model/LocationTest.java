@@ -35,4 +35,32 @@ public class LocationTest
         assertThat(mapper.writeValueAsString(location))
                 .isEqualTo("{\"address\":\"abc\",\"lat\":12.0,\"lng\":34.0}");
     }
+
+    @Test
+    public void testGetQueryForm1() throws Exception
+    {
+        Location location = Location.create("abc", 12.21, 34.43);
+        assertThat(location.getQueryForm()).isEqualTo("12.21,34.43");
+    }
+
+    @Test
+    public void testGetQueryForm2() throws Exception
+    {
+        Location location = Location.create("abc", 12.21, -34.43);
+        assertThat(location.getQueryForm()).isEqualTo("12.21,-34.43");
+    }
+
+    @Test
+    public void testGetQueryForm3() throws Exception
+    {
+        Location location = Location.create("abc", -12.21, 34.43);
+        assertThat(location.getQueryForm()).isEqualTo("-12.21,34.43");
+    }
+
+    @Test
+    public void testGetQueryForm4() throws Exception
+    {
+        Location location = Location.create("abc", -12.21, -34.43);
+        assertThat(location.getQueryForm()).isEqualTo("-12.21,-34.43");
+    }
 }
