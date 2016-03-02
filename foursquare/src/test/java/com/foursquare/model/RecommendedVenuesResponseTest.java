@@ -26,6 +26,9 @@ public class RecommendedVenuesResponseTest
     {
         RecommendedVenuesResponse created = mapper.readValue(getClass().getResourceAsStream("recommended_venues_response_1.json"),
                 RecommendedVenuesResponse.class);
+        assertThat(created.getSuggestedBounds()).isEqualTo(SuggestedBounds.create(
+                Location.create(null, 40.707701413033114, -73.99130887379786),
+                Location.create(null, 40.69179498033176, -74.00522546797018)));
         assertThat(created.getGroups().get(0).getType()).isEqualTo(GroupType.create("Recommended Places"));
         assertThat(created.getGroups().get(0).getItems().size()).isGreaterThan(5);
         assertThat(created.getGroups().get(0).getItems().get(0)).isEqualTo(RecommendedVenue.create(
@@ -40,7 +43,11 @@ public class RecommendedVenuesResponseTest
     @Test
     public void testCanSerialise() throws Exception
     {
-        RecommendedVenuesResponse venue = RecommendedVenuesResponse.create(Collections.singletonList(
+        RecommendedVenuesResponse venue = RecommendedVenuesResponse.create(
+                SuggestedBounds.create(
+                        Location.create(null, 21, 43),
+                        Location.create(null, 65, 87)),
+                Collections.singletonList(
                 RecommendedVenuesGroup.create(
                         GroupType.create("mno"),
                         "pqr",
@@ -52,7 +59,9 @@ public class RecommendedVenuesResponseTest
                                                 Location.create("ghi", 12, 34)),
                                         ReferralId.create("jkl"))))));
         assertThat(mapper.writeValueAsString(venue))
-                .isEqualTo("{\"groups\":[{\"type\":\"mno\",\"name\":\"pqr\",\"items\":[{\"venue\":{\"id\":\"abc\",\"name\":\"def\"," +
+                .isEqualTo("{\"suggestedBounds\":{\"ne\":{\"address\":null,\"lat\":21.0,\"lng\":43.0}," +
+                        "\"sw\":{\"address\":null,\"lat\":65.0,\"lng\":87.0}}," +
+                        "\"groups\":[{\"type\":\"mno\",\"name\":\"pqr\",\"items\":[{\"venue\":{\"id\":\"abc\",\"name\":\"def\"," +
                         "\"location\":{\"address\":\"ghi\",\"lat\":12.0,\"lng\":34.0}},\"referralId\":\"jkl\"}]}]}");
     }
 }

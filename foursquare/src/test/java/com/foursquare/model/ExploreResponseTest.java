@@ -43,21 +43,28 @@ public class ExploreResponseTest
     {
         ExploreResponse venue = ExploreResponse.create(
                 ResponseMeta.create(200, RequestId.create("stu")),
-                RecommendedVenuesResponse.create(Collections.singletonList(
-                RecommendedVenuesGroup.create(
-                        GroupType.create("mno"),
-                        "pqr",
+                RecommendedVenuesResponse.create(
+                        SuggestedBounds.create(
+                                Location.create(null, 21, 43),
+                                Location.create(null, 65, 87)),
                         Collections.singletonList(
-                                RecommendedVenue.create(
-                                        Venue.create(
-                                                VenueId.create("abc"),
-                                                "def",
-                                                Location.create("ghi", 12, 34)),
-                                        ReferralId.create("jkl")))))));
+                                RecommendedVenuesGroup.create(
+                                        GroupType.create("mno"),
+                                        "pqr",
+                                        Collections.singletonList(
+                                                RecommendedVenue.create(
+                                                        Venue.create(
+                                                                VenueId.create("abc"),
+                                                                "def",
+                                                                Location.create("ghi", 12, 34)),
+                                                        ReferralId.create("jkl")))))));
         assertThat(mapper.writeValueAsString(venue))
                 .isEqualTo("{\"meta\":{\"code\":200,\"requestId\":\"stu\"}," +
-                        "\"response\":{\"groups\":[{\"type\":\"mno\",\"name\":\"pqr\"," +
-                        "\"items\":[{\"venue\":{\"id\":\"abc\",\"name\":\"def\"," +
+                        "\"response\":{" +
+                        "\"suggestedBounds\":{\"ne\":{\"address\":null,\"lat\":21.0,\"lng\":43.0}," +
+                        "\"sw\":{\"address\":null,\"lat\":65.0,\"lng\":87.0}}," +
+                        "\"groups\":[{\"type\":\"mno\",\"name\":\"pqr\",\"items\":[" +
+                        "{\"venue\":{\"id\":\"abc\",\"name\":\"def\"," +
                         "\"location\":{\"address\":\"ghi\",\"lat\":12.0,\"lng\":34.0}},\"referralId\":\"jkl\"}]}]}}");
     }
 }
