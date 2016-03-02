@@ -13,9 +13,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Iterator;
+
 import retrofit.JacksonConverterFactory;
-import retrofit.Response;
 import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -35,8 +37,8 @@ public class FourSquareRetrofitRequestTest
         this.retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.END_POINT)
                 .addConverterFactory(JacksonConverterFactory.create(
-                        ObjectMapperFactory.create()
-                ))
+                        ObjectMapperFactory.create()))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
                 .create(FoursquareServiceRetrofit.class);
         this.keys = Keys.create(
@@ -48,17 +50,19 @@ public class FourSquareRetrofitRequestTest
     @Test @FlakyTest(tolerance = 3)
     public void canExploreVenues() throws Exception
     {
-        Response<ExploreResponse> response = retrofit
+        Iterator<ExploreResponse> iterator = retrofit
                 .exploreVenues(
                         keys.getClientId(),
                         keys.getClientSecret(),
                         version,
                         "40.7,-74")
-                .execute();
-        assertThat(response.isSuccess()).isTrue();
-        assertThat(response.body().getMeta().getCode()).isEqualTo(200);
-        assertThat(response.body().getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
-        assertThat(response.body().getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
+                .toBlocking()
+                .getIterator();
+        ExploreResponse response = iterator.next();
+        assertThat(iterator.hasNext()).isFalse();
+        assertThat(response.getMeta().getCode()).isEqualTo(200);
+        assertThat(response.getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
+        assertThat(response.getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
     }
 
 }

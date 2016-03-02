@@ -4,9 +4,9 @@ import android.support.annotation.NonNull;
 
 import com.foursquare.model.ExploreResponse;
 
-import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Query;
+import rx.Observable;
 
 interface FoursquareServiceRetrofit
 {
@@ -17,7 +17,7 @@ interface FoursquareServiceRetrofit
     String KEY_LAT_LON = "ll";
 
     @GET(PREFIX + "/venues/explore")
-    Call<ExploreResponse> exploreVenues(
+    Observable<ExploreResponse> exploreVenues(
             @NonNull @Query(KEY_CLIENT_ID) String clientId,
             @NonNull @Query(KEY_CLIENT_SECRET)String clientSecret,
             @NonNull @Query(KEY_VERSION) String version,

@@ -14,7 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import retrofit.Response;
+import java.util.Iterator;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -39,14 +39,15 @@ public class FourSquareRequestTest
     @Test @FlakyTest(tolerance = 3)
     public void canExploreVenues() throws Exception
     {
-        Response<ExploreResponse> response = service
+        Iterator<ExploreResponse> iterator = service
                 .exploreVenues(
                         Location.create(null, 40.7, -74))
-                .execute();
-        assertThat(response.isSuccess()).isTrue();
-        assertThat(response.body().getMeta().getCode()).isEqualTo(200);
-        assertThat(response.body().getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
-        assertThat(response.body().getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
+                .toBlocking()
+                .getIterator();
+        ExploreResponse response = iterator.next();
+        assertThat(iterator.hasNext()).isFalse();
+        assertThat(response.getMeta().getCode()).isEqualTo(200);
+        assertThat(response.getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
+        assertThat(response.getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
     }
-
 }

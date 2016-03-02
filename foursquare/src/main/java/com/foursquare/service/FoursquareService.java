@@ -8,9 +8,10 @@ import com.foursquare.credentials.Keys;
 import com.foursquare.model.ExploreResponse;
 import com.foursquare.model.Location;
 
-import retrofit.Call;
 import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
+import rx.Observable;
 
 public class FoursquareService
 {
@@ -33,6 +34,7 @@ public class FoursquareService
         this(new Retrofit.Builder()
                         .baseUrl(Constants.END_POINT)
                         .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                         .build()
                         .create(FoursquareServiceRetrofit.class),
                 keys,
@@ -49,7 +51,7 @@ public class FoursquareService
         this.version = version;
     }
 
-    @NonNull public Call<ExploreResponse> exploreVenues(@NonNull Location location)
+    @NonNull public Observable<ExploreResponse> exploreVenues(@NonNull Location location)
     {
         return serviceRetrofit.exploreVenues(
                 keys.getClientId(),
