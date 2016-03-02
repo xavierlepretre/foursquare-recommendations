@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import com.foursquare.credentials.Keys;
 import com.foursquare.model.ExploreResponse;
+import com.foursquare.model.Location;
 import com.foursquare.model.RecommendedVenuesGroup;
 import com.foursquare.service.FoursquareService;
 import com.github.xavierlepretre.foursquarerecommendations.rx.ViewObservable;
@@ -24,18 +25,24 @@ import com.github.xavierlepretre.rxdialog.AlertDialogEvent;
 import com.github.xavierlepretre.rxdialog.support.RxAlertDialogSupport;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func2;
+import rx.subjects.BehaviorSubject;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback
 {
     public static final String TAG = MainActivity.class.getSimpleName();
 
+    @VisibleForTesting BehaviorSubject<GoogleMap> mapSubject;
     private FloatingActionButton fab;
     private FoursquareService foursquareService;
     private Subscription placeSubscription;
@@ -48,9 +55,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mapSubject = BehaviorSubject.create();
         fab = (FloatingActionButton) findViewById(R.id.fab);
         foursquareService = new FoursquareService(Keys.create(Constants.CLIENT_ID, Constants.CLIENT_SECRET));
         placeSubscription = getDesiredPlaceName(fab)
@@ -70,12 +82,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         MainActivity.this.recommendedVenuesGroups = recommendedVenuesGroups;
                     }
                 })
-                .subscribe(
-                        new Action1<List<RecommendedVenuesGroup>>()
+                .observeOn(AndroidSchedulers.mainThread())
+                .withLatestFrom(
+                        mapSubject,
+                        new Func2<List<RecommendedVenuesGroup>, GoogleMap, GoogleMap>()
                         {
-                            @Override public void call(List<RecommendedVenuesGroup> desiredPlace)
+                            @Override
+                            public GoogleMap call(List<RecommendedVenuesGroup> recommendedVenuesGroups, GoogleMap map)
                             {
-
+                                populateMap(map, recommendedVenuesGroups);
+                                return map;
+                            }
+                        })
+                .subscribe(
+                        new Action1<GoogleMap>()
+                        {
+                            @Override public void call(GoogleMap map)
+                            {
                             }
                         },
                         new Action1<Throwable>()
@@ -121,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override public void onMapReady(GoogleMap googleMap)
     {
+        mapSubject.onNext(googleMap);
     }
 
     @NonNull private Observable<String> getDesiredPlaceName(@NonNull FloatingActionButton fab)
@@ -152,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 {
                                     @Override public String call(AlertDialogEvent alertDialogEvent)
                                     {
-                                        return input.getText().toString();
+                                        return input.getText().toString().trim();
                                     }
                                 });
                     }
@@ -176,5 +200,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         return Observable.just(exploreResponse.getResponse().getGroups());
                     }
                 });
+    }
+
+    private void populateMap(
+            @NonNull GoogleMap map,
+            @NonNull List<RecommendedVenuesGroup> recommendedVenuesGroups)
+    {
+        for (MarkerOptions marker : MarkerOptionsFactory.create(recommendedVenuesGroups))
+        {
+            map.addMarker(marker);
+        }
     }
 }

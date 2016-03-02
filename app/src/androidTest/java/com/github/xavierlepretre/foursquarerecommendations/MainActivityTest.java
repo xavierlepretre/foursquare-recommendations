@@ -63,4 +63,12 @@ public class MainActivityTest
         assertThat(activityRule.getActivity().recommendedVenuesGroups.size()).isGreaterThanOrEqualTo(1);
         assertThat(activityRule.getActivity().recommendedVenuesGroups.get(0).getItems().size()).isGreaterThanOrEqualTo(10);
     }
+
+    @Test
+    public void testMapIsReturned() throws Exception
+    {
+        onView(withId(R.id.map)).perform(click());
+
+        assertThat(activityRule.getActivity().mapSubject.getValue()).isNotNull();
+    }
 }
