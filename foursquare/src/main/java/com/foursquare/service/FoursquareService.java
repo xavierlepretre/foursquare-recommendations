@@ -12,12 +12,19 @@ import retrofit.JacksonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 public class FoursquareService
 {
     @NonNull private final FoursquareServiceRetrofit serviceRetrofit;
     @NonNull private final Keys keys;
     @NonNull private final String version;
+
+    public FoursquareService(
+            @NonNull Keys keys)
+    {
+        this(ObjectMapperFactory.create(), keys, Constants.VERSION);
+    }
 
     public FoursquareService(
             @NonNull Keys keys,
@@ -57,7 +64,8 @@ public class FoursquareService
                 keys.getClientId(),
                 keys.getClientSecret(),
                 version,
-                location.getQueryForm());
+                location.getQueryForm())
+                .subscribeOn(Schedulers.io());
     }
 
     @NonNull public Observable<ExploreResponse> exploreVenuesByNear(@NonNull String location)
@@ -66,6 +74,7 @@ public class FoursquareService
                 keys.getClientId(),
                 keys.getClientSecret(),
                 version,
-                location);
+                location)
+                .subscribeOn(Schedulers.io());
     }
 }

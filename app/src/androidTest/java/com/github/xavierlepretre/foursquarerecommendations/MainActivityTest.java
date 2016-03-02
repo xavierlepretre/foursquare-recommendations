@@ -38,4 +38,19 @@ public class MainActivityTest
 
         assertThat(activityRule.getActivity().desiredPlace).isEqualTo("London");
     }
+
+    @Test(timeout = 10000)
+    public void testEnterPlace_getsSomethingFromFoursquare() throws Exception
+    {
+        onView(withId(R.id.fab)).perform(click());
+        onView(withClassName(new StringContains("EditText"))).perform(typeText("London"));
+        onView(withText(android.R.string.ok)).perform(click());
+
+        while (activityRule.getActivity().recommendedVenuesGroups == null)
+        {
+            Thread.sleep(500, 0);
+        }
+        assertThat(activityRule.getActivity().recommendedVenuesGroups.size()).isGreaterThanOrEqualTo(1);
+        assertThat(activityRule.getActivity().recommendedVenuesGroups.get(0).getItems().size()).isGreaterThanOrEqualTo(10);
+    }
 }

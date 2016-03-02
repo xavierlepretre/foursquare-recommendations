@@ -46,7 +46,7 @@ public class FourSquareRequestTest
                 .getIterator();
         ExploreResponse response = iterator.next();
         assertThat(iterator.hasNext()).isFalse();
-        assertThat(response.getMeta().getCode()).isEqualTo(200);
+        assertThat(response.getMeta().getCode()).isEqualTo(Constants.RESPONSE_SUCCESSFUL);
         assertThat(response.getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
         assertThat(response.getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
     }
@@ -60,7 +60,7 @@ public class FourSquareRequestTest
                 .getIterator();
         ExploreResponse response = iterator.next();
         assertThat(iterator.hasNext()).isFalse();
-        assertThat(response.getMeta().getCode()).isEqualTo(200);
+        assertThat(response.getMeta().getCode()).isEqualTo(Constants.RESPONSE_SUCCESSFUL);
         assertThat(response.getResponse().getGroups().size()).isGreaterThanOrEqualTo(1);
         assertThat(response.getResponse().getGroups().get(0).getItems().size()).isGreaterThanOrEqualTo(5);
     }
