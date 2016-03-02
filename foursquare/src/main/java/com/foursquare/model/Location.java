@@ -1,6 +1,7 @@
 package com.foursquare.model;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,7 +16,7 @@ abstract public class Location
     public static final String KEY_LONGITUDE = "lng";
 
     @JsonProperty(KEY_ADDRESS)
-    @NonNull abstract public String getAddress();
+    @Nullable abstract public String getAddress();
 
     @JsonProperty(KEY_LATITUDE)
     abstract public double getLat();
@@ -25,7 +26,7 @@ abstract public class Location
 
     @JsonCreator
     @NonNull static Location create(
-            @JsonProperty(KEY_ADDRESS) @NonNull String address,
+            @JsonProperty(KEY_ADDRESS) @Nullable String address,
             @JsonProperty(KEY_LATITUDE) double lat,
             @JsonProperty(KEY_LONGITUDE) double lon)
     {
