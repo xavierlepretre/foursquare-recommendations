@@ -1,0 +1,41 @@
+package com.github.xavierlepretre.foursquarerecommendations;
+
+import android.support.test.rule.ActivityTestRule;
+
+import org.hamcrest.core.StringContains;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.fest.assertions.api.Assertions.assertThat;
+
+public class MainActivityTest
+{
+    @Rule
+    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void testFabButton_launchesDialog() throws Exception
+    {
+        onView(withId(R.id.fab)).perform(click());
+
+        onView(withText("Where do you want to explore?")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testEnterPlace_takesIt() throws Exception
+    {
+        onView(withId(R.id.fab)).perform(click());
+        onView(withClassName(new StringContains("EditText"))).perform(typeText("London"));
+        onView(withText(android.R.string.ok)).perform(click());
+
+        assertThat(activityRule.getActivity().desiredPlace).isEqualTo("London");
+    }
+}

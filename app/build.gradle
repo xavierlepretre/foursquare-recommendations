@@ -10,6 +10,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         debug {
@@ -33,6 +35,13 @@ android {
     }
 }
 
+// Force a specific version of Support Annotation so that there are no dependency conflicts
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:support-annotations:23.2.0'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
@@ -41,4 +50,11 @@ dependencies {
     compile project(':foursquare')
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile(name:'rx-alert-dialog-library-debug', ext:'aar')
+
+    androidTestCompile "junit:junit:4.12"
+    androidTestCompile "com.android.support.test:rules:0.4.1"
+    androidTestCompile "com.android.support.test:runner:0.4.1"
+    androidTestCompile "com.android.support.test.espresso:espresso-core:2.2.1"
+    androidTestCompile "org.easytesting:fest-assert-core:2.0M10"
 }
